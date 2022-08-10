@@ -25,7 +25,7 @@ void sig_handler(int signo){
             : "memory"
         );
 
-        printf("寄存器X%d的值为：%lx\n", i, reg);
+        printf("寄存器X%d的值为：0x%lx\n", i, reg);
     }
 
     long lr, sp, pc, cpsr;
@@ -40,10 +40,10 @@ void sig_handler(int signo){
         :"memory"
     );
 
-    printf("寄存器LR的值为：%lx\n", lr);
-    printf("寄存器SP的值为：%lx\n", sp);
-    printf("寄存器PC的值为：%lx\n", pc);
-    printf("寄存器PSTATE的值为：%lx\n", cpsr);
+    printf("寄存器LR的值为：0x%lx\n", lr);
+    printf("寄存器SP的值为：0x%lx\n", sp);
+    printf("寄存器PC的值为：0x%lx\n", pc);
+    printf("寄存器PSTATE的值为：0x%lx\n", cpsr);
     exit(0);
 }
 
