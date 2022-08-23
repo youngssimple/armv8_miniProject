@@ -41,6 +41,7 @@ int main(){
     waitpid(cpid, NULL, WNOHANG);
     printf("Parent process is still working\n");
 
+
     return 0;
 }
 
@@ -48,21 +49,18 @@ void func1(){
 	int i = 1;
 
 	sigsegv_error1(i);
-
-	printf("已从问题函数中返回\n");
 }
 
 
 void sigsegv_error1(int i){
 	sigsegv_error2();
-    int * p = NULL;
-    *p = i;
+
+	printf("已从问题函数中返回\n");
 }
 
 void sigsegv_error2(){
-	int j = 0;
-
-	return;
+    int * p = NULL;
+    *p = 1;
 }
 
 void sig_handler(int signo, siginfo_t * sig, void * context){
@@ -71,16 +69,16 @@ void sig_handler(int signo, siginfo_t * sig, void * context){
     long int fp = p->uc_mcontext.regs[29], lr = p->uc_mcontext.regs[30], sp = p->uc_mcontext.sp, ret_lr, ret_sp;		//获取栈回溯所需的值
     void * addr = NULL;							//存储栈回溯得到的函数地址
 
-//    //设置返回地址，便于跳过问题函数
+//    //设置返回地址和返回栈指针，便于跳过问题函数
 //    if(sp != fp){
 //    	ret_lr = lr;
 //    	ret_sp = fp;
 //    }else{
 //
 //    	asm(
-//    		"ldp %0, %1, [%2]\n"
-//
-//    		:"=r"(ret_sp), "=r"(ret_lr)
+//    		"ldr %0, [%2, #8]\n"
+//    		"ldr %1, [%2]\n"
+//    		:"=r"(ret_lr), "=r"(ret_sp)
 //    		:"r"(fp)
 //    		:
 //    	);
@@ -94,6 +92,7 @@ void sig_handler(int signo, siginfo_t * sig, void * context){
 		{sigsegv_error2, "sigsegv_error2()"},
 		{func1, "func1()"}
 	};
+
 
     //输出异常时各寄存器的值
     printf("异常发生时程序现场如下:\n");
@@ -206,13 +205,12 @@ void sig_handler(int signo, siginfo_t * sig, void * context){
     }
 
 //	asm(
-//		"mov x1,%0\n"
-//		"mov sp, %1\n"
-//		"mov x29, %1\n"
-//		"br x1\n"
-//		:
-//		:"r"(ret_lr), "r"(ret_sp)
-//		:
+//	"mov x1,%0\n"
+//	"mov sp, %1\n"
+//	"mov x29, %1\n"
+//	"br x1\n"
+//	:
+//	:"r"(ret_lr), "r"(ret_sp)
+//	:
 //	);
-		
 }
